@@ -265,6 +265,24 @@ module.exports = function (report, appDirectory, options, rootDir = null) {
 
     // Iterate through test cases
     suite.testResults.forEach((tc) => {
+      if (options.publishTransientRetryFailures === 'true' && Array.isArray(tc.retryReasons)) {
+        const retriedFailureCases = tc.retryReasons.map(rr => {
+              const tCase = generateTestCase(
+                  options,
+                  suiteOptions,
+                  tc,
+                  filepath,
+                  filename,
+                  suiteTitle,
+                  displayName,
+                  getTestCaseProperties
+              );
+              tCase.testcase.push({"failure": strip(rr)});
+              return tCase;
+            });
+        testSuite.testsuite.push(...retriedFailureCases);
+      }
+
       const testCase = generateTestCase(
         options,
         suiteOptions,

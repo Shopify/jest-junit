@@ -56,7 +56,7 @@
           "status": "passed",
           "title": "should bar",
           "invocations": 2,
-          "retryReasons": ["error"]
+          "retryReasons": ["error on first try"]
         }
       ],
       "skipped": false
