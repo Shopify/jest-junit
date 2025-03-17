@@ -519,4 +519,74 @@ describe('buildJsonResults', () => {
       }
       `)
   });
+
+  it("should add transient retry-failures as testcase", () => {
+    const retriedTestsReport = require("../__mocks__/retried-tests.json");
+
+    // Mock Date.now() to return a fixed later value
+    const startDate = new Date(retriedTestsReport.startTime);
+    jest.spyOn(Date, 'now').mockImplementation(() => startDate.getTime() + 1234);
+
+    jsonResults = buildJsonResults(retriedTestsReport, "/", {
+      ...constants.DEFAULT_OPTIONS,
+      testSuitePropertiesFile: "not-existing-file", // Skip the contents of the default junitProperties.js
+      publishTransientRetryFailures: "true",
+    });
+
+    expect(jsonResults).toMatchInlineSnapshot(`
+      Object {
+        "testsuites": Array [
+          Object {
+            "_attr": Object {
+              "errors": 0,
+              "failures": 0,
+              "name": "jest tests",
+              "tests": 1,
+              "time": 1.234,
+            },
+          },
+          Object {
+            "testsuite": Array [
+              Object {
+                "_attr": Object {
+                  "errors": 0,
+                  "failures": 0,
+                  "name": "foo",
+                  "skipped": 0,
+                  "tests": 1,
+                  "time": 0.12,
+                  "timestamp": "2017-03-17T01:05:47",
+                },
+              },
+              Object {
+                "testcase": Array [
+                  Object {
+                    "_attr": Object {
+                      "classname": "foo baz should bar",
+                      "name": "foo baz should bar",
+                      "time": 0.001,
+                    },
+                  },
+                  Object {
+                    "failure": "error on first try",
+                  },
+                ],
+              },
+              Object {
+                "testcase": Array [
+                  Object {
+                    "_attr": Object {
+                      "classname": "foo baz should bar",
+                      "name": "foo baz should bar",
+                      "time": 0.001,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }
+      `);
+  });
 });
