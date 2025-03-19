@@ -1,6 +1,6 @@
 {
   "name": "@shopify/jest-junit",
-  "version": "16.1.0",
+  "version": "16.2.0",
   "description": "(fork) A jest reporter that generates junit xml files",
   "main": "index.js",
   "repository": "https://github.com/shopify/jest-junit",
