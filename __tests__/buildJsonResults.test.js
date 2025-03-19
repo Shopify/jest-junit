@@ -163,7 +163,7 @@ describe('buildJsonResults', () => {
     const errorSuite = jsonResults.testsuites[1].testsuite[2];
     expect(errorSuite.testcase[0]._attr.name).toEqual(suiteResult.name);
     expect(errorSuite.testcase[0]._attr.classname).toEqual('Test suite failed to run');
-    expect(errorSuite.testcase[1].error).toContain("Property 'hello' does not exist");
+    expect(errorSuite.testcase[1].error[1]).toContain("Property 'hello' does not exist");
 
   });
 
@@ -178,7 +178,7 @@ describe('buildJsonResults', () => {
     const errorSuite = jsonResults.testsuites[1].testsuite[2];
     expect(slash(errorSuite.testcase[0]._attr.name)).toEqual('../spec/test.spec.ts');
     expect(errorSuite.testcase[0]._attr.classname).toEqual('Test suite failed to run');
-    expect(errorSuite.testcase[1].error).toContain("Cannot find module './mult'");
+    expect(errorSuite.testcase[1].error[1]).toContain("Cannot find module './mult'");
   });
 
   it('should include a failing testcase from a suite with passing testcases but a failure from "testExecError" ', () => {
@@ -189,7 +189,7 @@ describe('buildJsonResults', () => {
 
     const errorSuite = jsonResults.testsuites[1].testsuite[3];
     expect(slash(errorSuite.testcase[0]._attr.name)).toContain('Test execution failure');
-    expect(errorSuite.testcase[1].failure).toContain("beforeAll has crashed");
+    expect(errorSuite.testcase[1].failure[1]).toContain("beforeAll has crashed");
   });
 
   it('should not include a failing testcase from a suite with passing testcases but a null value from "testExecError" ', () => {
@@ -213,7 +213,7 @@ describe('buildJsonResults', () => {
     const errorSuite = jsonResults.testsuites[1].testsuite[2];
     expect(slash(errorSuite.testcase[0]._attr.name)).toEqual('../spec/test.spec.ts');
     expect(errorSuite.testcase[0]._attr.classname).toEqual('Test suite failed to run');
-    expect(errorSuite.testcase[1].error).toContain("Your test suite must contain at least one test");
+    expect(errorSuite.testcase[1].error[1]).toContain("Your test suite must contain at least one test");
   });
 
   it('should honor templates when test has errors', () => {
@@ -308,7 +308,7 @@ describe('buildJsonResults', () => {
         noStackTrace: "true"
       }));
 
-    const failureMsg = jsonResults.testsuites[1].testsuite[2].testcase[1].failure;
+    const failureMsg = jsonResults.testsuites[1].testsuite[2].testcase[1].failure[1];
 
     // Make sure no escape codes are there that exist in the mock
     expect(failureMsg.includes('\u001b')).toBe(false);
@@ -325,7 +325,7 @@ describe('buildJsonResults', () => {
         noStackTrace: "false"
       }));
 
-    const failureMsg = jsonResults.testsuites[1].testsuite[2].testcase[1].failure;
+    const failureMsg = jsonResults.testsuites[1].testsuite[2].testcase[1].failure[1];
 
     // Make sure no escape codes are there that exist in the mock
     expect(failureMsg.includes('\u001b')).toBe(false);
@@ -342,7 +342,7 @@ describe('buildJsonResults', () => {
         noStackTrace: "true"
       }));
 
-    const failureMsg = jsonResults.testsuites[1].testsuite[2].testcase[1].failure;
+    const failureMsg = jsonResults.testsuites[1].testsuite[2].testcase[1].failure[1];
 
     // Make sure no escape codes are there that exist in the mock
     expect(failureMsg.includes('\u001b')).toBe(false);
@@ -534,59 +534,67 @@ describe('buildJsonResults', () => {
     });
 
     expect(jsonResults).toMatchInlineSnapshot(`
-      Object {
-        "testsuites": Array [
-          Object {
-            "_attr": Object {
-              "errors": 0,
-              "failures": 0,
-              "name": "jest tests",
-              "tests": 1,
-              "time": 1.234,
+Object {
+  "testsuites": Array [
+    Object {
+      "_attr": Object {
+        "errors": 0,
+        "failures": 0,
+        "name": "jest tests",
+        "tests": 1,
+        "time": 1.234,
+      },
+    },
+    Object {
+      "testsuite": Array [
+        Object {
+          "_attr": Object {
+            "errors": 0,
+            "failures": 0,
+            "name": "foo",
+            "skipped": 0,
+            "tests": 1,
+            "time": 0.12,
+            "timestamp": "2017-03-17T01:05:47",
+          },
+        },
+        Object {
+          "testcase": Array [
+            Object {
+              "_attr": Object {
+                "classname": "foo baz should bar",
+                "name": "foo baz should bar",
+                "time": 0.001,
+              },
             },
-          },
-          Object {
-            "testsuite": Array [
-              Object {
-                "_attr": Object {
-                  "errors": 0,
-                  "failures": 0,
-                  "name": "foo",
-                  "skipped": 0,
-                  "tests": 1,
-                  "time": 0.12,
-                  "timestamp": "2017-03-17T01:05:47",
+            Object {
+              "failure": Array [
+                Object {
+                  "_attr": Object {
+                    "message": "",
+                    "type": "Error",
+                  },
                 },
+                "error on first try",
+              ],
+            },
+          ],
+        },
+        Object {
+          "testcase": Array [
+            Object {
+              "_attr": Object {
+                "classname": "foo baz should bar",
+                "name": "foo baz should bar",
+                "time": 0.001,
               },
-              Object {
-                "testcase": Array [
-                  Object {
-                    "_attr": Object {
-                      "classname": "foo baz should bar",
-                      "name": "foo baz should bar",
-                      "time": 0.001,
-                    },
-                  },
-                  Object {
-                    "failure": "error on first try",
-                  },
-                ],
-              },
-              Object {
-                "testcase": Array [
-                  Object {
-                    "_attr": Object {
-                      "classname": "foo baz should bar",
-                      "name": "foo baz should bar",
-                      "time": 0.001,
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      }
-      `);
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`);
   });
 });
