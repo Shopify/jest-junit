@@ -1,9 +1,9 @@
 {
-  "name": "jest-junit",
+  "name": "@shopify/jest-junit",
   "version": "16.1.0",
-  "description": "A jest reporter that generates junit xml files",
+  "description": "(fork) A jest reporter that generates junit xml files",
   "main": "index.js",
-  "repository": "https://github.com/jest-community/jest-junit",
+  "repository": "https://github.com/shopify/jest-junit",
   "author": "Jason Palmer",
   "license": "Apache-2.0",
   "engines": {
