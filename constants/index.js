@@ -40,7 +40,7 @@ module.exports = {
     includeShortConsoleOutput: 'false',
     reportTestSuiteErrors: 'false',
     noStackTrace: 'false',
-    publishTransientRetryFailures: 'false',
+    publishTransientRetryFailures: 'true',
     testCasePropertiesFile: 'junitTestCaseProperties.js',
     testCasePropertiesDirectory: process.cwd(),
     testSuitePropertiesFile: 'junitProperties.js',
