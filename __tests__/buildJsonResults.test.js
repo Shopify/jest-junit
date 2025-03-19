@@ -454,70 +454,104 @@ describe('buildJsonResults', () => {
     });
   
     expect(jsonResults).toMatchInlineSnapshot(`
-      Object {
-        "testsuites": Array [
-          Object {
-            "_attr": Object {
-              "errors": 0,
-              "failures": 0,
-              "name": "jest tests",
-              "tests": 1,
-              "time": 1.234,
-            },
+Object {
+  "testsuites": Array [
+    Object {
+      "_attr": Object {
+        "errors": 0,
+        "failures": 0,
+        "name": "jest tests",
+        "tests": 1,
+        "time": 1.234,
+      },
+    },
+    Object {
+      "testsuite": Array [
+        Object {
+          "_attr": Object {
+            "errors": 0,
+            "failures": 0,
+            "name": "foo",
+            "skipped": 0,
+            "tests": 1,
+            "time": 0.12,
+            "timestamp": "2017-03-17T01:05:47",
           },
-          Object {
-            "testsuite": Array [
-              Object {
+        },
+        Object {
+          "properties": Array [
+            Object {
+              "property": Object {
                 "_attr": Object {
-                  "errors": 0,
-                  "failures": 0,
-                  "name": "foo",
-                  "skipped": 0,
-                  "tests": 1,
-                  "time": 0.12,
-                  "timestamp": "2017-03-17T01:05:47",
+                  "name": "best-tester",
+                  "value": "Jason Palmer",
                 },
               },
-              Object {
-                "properties": Array [
-                  Object {
-                    "property": Object {
-                      "_attr": Object {
-                        "name": "best-tester",
-                        "value": "Jason Palmer",
-                      },
-                    },
-                  },
-                ],
+            },
+          ],
+        },
+        Object {
+          "testcase": Array [
+            Object {
+              "_attr": Object {
+                "classname": "foo baz should bar",
+                "name": "foo baz should bar",
+                "time": 0.001,
               },
-              Object {
-                "testcase": Array [
-                  Object {
+            },
+            Object {
+              "properties": Array [
+                Object {
+                  "property": Object {
                     "_attr": Object {
-                      "classname": "foo baz should bar",
-                      "name": "foo baz should bar",
-                      "time": 0.001,
+                      "name": "dd_tags[test.invocations]",
+                      "value": 2,
                     },
                   },
-                  Object {
-                    "properties": Array [
-                      Object {
-                        "property": Object {
-                          "_attr": Object {
-                            "name": "dd_tags[test.invocations]",
-                            "value": 2,
-                          },
-                        },
-                      },
-                    ],
+                },
+              ],
+            },
+            Object {
+              "failure": Array [
+                Object {
+                  "_attr": Object {
+                    "message": "",
+                    "type": "Error",
                   },
-                ],
+                },
+                "error on first try",
+              ],
+            },
+          ],
+        },
+        Object {
+          "testcase": Array [
+            Object {
+              "_attr": Object {
+                "classname": "foo baz should bar",
+                "name": "foo baz should bar",
+                "time": 0.001,
               },
-            ],
-          },
-        ],
-      }
-      `)
+            },
+            Object {
+              "properties": Array [
+                Object {
+                  "property": Object {
+                    "_attr": Object {
+                      "name": "dd_tags[test.invocations]",
+                      "value": 2,
+                    },
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`)
   });
 
   it("should add transient retry-failures as testcase", () => {
