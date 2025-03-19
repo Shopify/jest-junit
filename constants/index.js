@@ -34,7 +34,7 @@ module.exports = {
     titleTemplate: '{classname} {title}',
     ancestorSeparator: ' ',
     usePathForSuiteName: 'false',
-    addFileAttribute: 'false',
+    addFileAttribute: 'true',
     filePathPrefix: '',
     includeConsoleOutput: 'false',
     includeShortConsoleOutput: 'false',

@@ -365,13 +365,13 @@ describe('buildJsonResults', () => {
     expect(jsonResults).toMatchSnapshot();
   });
 
-  it('should not return the file name by default', () => {
+  it('should return the file name by default', () => {
     const noFailingTestsReport = require('../__mocks__/no-failing-tests.json');
     jsonResults = buildJsonResults(noFailingTestsReport, '/', constants.DEFAULT_OPTIONS);
-    expect(jsonResults.testsuites[1].testsuite[2].testcase[0]._attr.file).toBe(undefined);
+    expect(slash(jsonResults.testsuites[1].testsuite[2].testcase[0]._attr.file)).toBe('path/to/test/__tests__/foo.test.js');
   });
 
-  it('should return the file name when addFileAttribute is "true"', () => {
+  it('should not return the file name when addFileAttribute is "false"', () => {
     // Ignore junit errors for this attribute
     // It is added for circle-ci and is known to not generate
     // jenkins-compatible junit
@@ -380,9 +380,9 @@ describe('buildJsonResults', () => {
     const noFailingTestsReport = require('../__mocks__/no-failing-tests.json');
     jsonResults = buildJsonResults(noFailingTestsReport, '/',
       Object.assign({}, constants.DEFAULT_OPTIONS, {
-        addFileAttribute: "true"
+        addFileAttribute: "false"
       }));
-    expect(slash(jsonResults.testsuites[1].testsuite[2].testcase[0]._attr.file)).toBe('path/to/test/__tests__/foo.test.js');
+    expect(jsonResults.testsuites[1].testsuite[2].testcase[0]._attr.file).toBe(undefined);
   });
 
   it('should prefix the file name with filePathPrefix', () => {
@@ -495,6 +495,7 @@ Object {
             Object {
               "_attr": Object {
                 "classname": "foo baz should bar",
+                "file": "path/to/test/__tests__/foo.test.js",
                 "name": "foo baz should bar",
                 "time": 0.001,
               },
@@ -529,6 +530,7 @@ Object {
             Object {
               "_attr": Object {
                 "classname": "foo baz should bar",
+                "file": "path/to/test/__tests__/foo.test.js",
                 "name": "foo baz should bar",
                 "time": 0.001,
               },
@@ -597,6 +599,7 @@ Object {
             Object {
               "_attr": Object {
                 "classname": "foo baz should bar",
+                "file": "path/to/test/__tests__/foo.test.js",
                 "name": "foo baz should bar",
                 "time": 0.001,
               },
@@ -619,6 +622,7 @@ Object {
             Object {
               "_attr": Object {
                 "classname": "foo baz should bar",
+                "file": "path/to/test/__tests__/foo.test.js",
                 "name": "foo baz should bar",
                 "time": 0.001,
               },
