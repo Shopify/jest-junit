@@ -15,6 +15,20 @@ const toTemplateTag = function (varName) {
 const testFailureStatus = 'failed';
 const testErrorStatus = 'error';
 
+// Generate a <failure> or <error> tag from a failure message
+const generateFailureTag = function (tagName, failureMessage) {
+  const extractFailureAttributes = /^(?<type>[^:]+): (?<message>.*)/;
+  const strippedFailure = strip(failureMessage);
+  const match = extractFailureAttributes.exec(strippedFailure);
+  return {[tagName]: [
+    {_attr: {
+      type: match?.groups.type ?? 'Error',
+      message: match?.groups.message ?? '',
+    }},
+    strippedFailure,
+  ]};
+}
+
 // Replaces var using a template string or a function.
 // When strOrFunc is a template string replaces {varname} with the value from the variables map.
 // When strOrFunc is a function it returns the result of the function to which the variables are passed.
@@ -88,9 +102,8 @@ const generateTestCase = function(junitOptions, suiteOptions, tc, filepath, file
 
     failureMessages.forEach((failure) => {
       const tagName = tc.status === testFailureStatus ? 'failure': testErrorStatus
-      testCase.testcase.push({
-        [tagName]: strip(failure)
-      });
+      const tag = generateFailureTag(tagName, failure);
+      testCase.testcase.push(tag);
     })
   }
 
@@ -266,8 +279,8 @@ module.exports = function (report, appDirectory, options, rootDir = null) {
     // Iterate through test cases
     suite.testResults.forEach((tc) => {
       if (options.publishTransientRetryFailures === 'true' && Array.isArray(tc.retryReasons)) {
-        const retriedFailureCases = tc.retryReasons.map(rr => {
-          const tCase = generateTestCase(
+        const retriedFailureCases = tc.retryReasons.map(reason => {
+          const retriedFailureCase = generateTestCase(
             options,
             suiteOptions,
             tc,
@@ -277,8 +290,8 @@ module.exports = function (report, appDirectory, options, rootDir = null) {
             displayName,
             getTestCaseProperties
           );
-          tCase.testcase.push({"failure": strip(rr)});
-          return tCase;
+          retriedFailureCase.testcase.push(generateFailureTag("failure", reason));
+          return retriedFailureCase;
         });
         testSuite.testsuite.push(...retriedFailureCases);
       }
