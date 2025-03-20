@@ -1,3 +1,4 @@
+
 [![Actions Status](https://github.com/jest-community/jest-junit/actions/workflows/nodejs.yml/badge.svg?branch=master)](https://github.com/jest-community/jest-junit/actions)
 
 # jest-junit
