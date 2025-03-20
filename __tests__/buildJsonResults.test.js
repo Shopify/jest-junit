@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 const fs = require('fs');
 const slash = require('slash');
 const buildJsonResults = require('../utils/buildJsonResults');
@@ -495,7 +496,7 @@ Object {
             Object {
               "_attr": Object {
                 "classname": "foo baz should bar",
-                "file": "path/to/test/__tests__/foo.test.js",
+                "file": "${path.join("path", "to", "test", "__tests__", "foo.test.js")}",
                 "name": "foo baz should bar",
                 "time": 0.001,
               },
@@ -530,7 +531,7 @@ Object {
             Object {
               "_attr": Object {
                 "classname": "foo baz should bar",
-                "file": "path/to/test/__tests__/foo.test.js",
+                "file": "${path.join("path", "to", "test", "__tests__", "foo.test.js")}",
                 "name": "foo baz should bar",
                 "time": 0.001,
               },
@@ -599,7 +600,7 @@ Object {
             Object {
               "_attr": Object {
                 "classname": "foo baz should bar",
-                "file": "path/to/test/__tests__/foo.test.js",
+                "file": "${path.join("path", "to", "test", "__tests__", "foo.test.js")}",
                 "name": "foo baz should bar",
                 "time": 0.001,
               },
@@ -622,7 +623,7 @@ Object {
             Object {
               "_attr": Object {
                 "classname": "foo baz should bar",
-                "file": "path/to/test/__tests__/foo.test.js",
+                "file": "${path.join("path", "to", "test", "__tests__", "foo.test.js")}",
                 "name": "foo baz should bar",
                 "time": 0.001,
               },
