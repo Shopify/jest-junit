@@ -3,7 +3,10 @@
   "version": "16.2.2",
   "description": "(fork) A jest reporter that generates junit xml files",
   "main": "index.js",
-  "repository": "https://github.com/shopify/jest-junit",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shopify/jest-junit.git"
+  },
   "author": "Jason Palmer",
   "license": "Apache-2.0",
   "engines": {
