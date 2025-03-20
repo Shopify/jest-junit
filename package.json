@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shopify/jest-junit.git"
+    "url": "git+https://github.com/Shopify/jest-junit.git"
   },
   "author": "Jason Palmer",
   "license": "Apache-2.0",
