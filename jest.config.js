@@ -10,8 +10,7 @@ module.exports = {
       testEnvironment: 'node',
       setupFilesAfterEnv: ["<rootDir>/__tests__/lib/setupTests.js"],
       snapshotFormat: {
-        escapeString: true,
-        printBasicPrototype: true,
+        printBasicPrototype: true
       }
     },
     "<rootDir>/integration-tests/testResultsProcessor/",
