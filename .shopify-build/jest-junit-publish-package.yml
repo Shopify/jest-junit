@@ -1,0 +1,57 @@
+# In the Buildkite UI for this Shopify Build pipeline:
+# - Enable Build tags.
+# - Disable Build pull requests.
+# - Keep this pipeline as the only package publish path for this repository.
+
+containers:
+  default:
+    build:
+      from: ubuntu-24
+      type: ci
+      node: 22.13.1
+      node_package_manager: pnpm
+
+# Documentation: https://shopify-build.docs.shopify.io/jobs/publish_packages_to_cloudsmith/
+steps:
+  - label: Publish to Cloudsmith
+    if: build.tag =~ /^v\d+\.\d+\.\d+$/
+    timeout: 10m
+    git:
+      history: shallow
+    run:
+      - git fetch origin master --depth=1000
+      - |
+        set -euo pipefail
+
+        VERSION=$(node -p "require('./package.json').version")
+        NAME=$(node -p "require('./package.json').name")
+        TAG="${BUILDKITE_TAG:-}"
+
+        if [ "$NAME" != "@shopify-internal/jest-junit" ]; then
+          echo "Expected package name @shopify-internal/jest-junit, got $NAME" >&2
+          exit 1
+        fi
+
+        if [ "$TAG" != "v$VERSION" ]; then
+          echo "Build tag $TAG must match package.json version v$VERSION" >&2
+          exit 1
+        fi
+
+        if ! git merge-base --is-ancestor "$BUILDKITE_COMMIT" origin/master; then
+          echo "Tagged commit $BUILDKITE_COMMIT must be on origin/master before publishing" >&2
+          exit 1
+        fi
+      - pnpm install --frozen-lockfile
+      - pnpm test
+      - rm -rf pkg
+      - mkdir -p pkg
+      - pnpm pack --pack-destination pkg
+      - ls -l pkg
+    publish:
+      package:
+        repository_name: node
+        package_type: npm
+        git_tag: false
+        artifacts:
+          - path: pkg
+            patterns: ['*.tgz']

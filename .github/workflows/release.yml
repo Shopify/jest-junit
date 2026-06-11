@@ -1,0 +1,94 @@
+name: Create release
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_version:
+        description: 'Package version from package.json to release, e.g. 16.2.7'
+        required: true
+        type: string
+
+concurrency:
+  group: create-release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    name: Create GitHub release tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate release branch
+        env:
+          GITHUB_REF: ${{ github.ref }}
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/master" ]; then
+            echo "Create releases only from refs/heads/master, got $GITHUB_REF" >&2
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Validate release metadata
+        id: metadata
+        env:
+          CONFIRM_VERSION: ${{ inputs.confirm_version }}
+        run: |
+          set -euo pipefail
+
+          VERSION=$(node -p "require('./package.json').version")
+          NAME=$(node -p "require('./package.json').name")
+          TAG="v${VERSION}"
+
+          if [ "$NAME" != "@shopify-internal/jest-junit" ]; then
+            echo "Expected package name @shopify-internal/jest-junit, got $NAME" >&2
+            exit 1
+          fi
+
+          if [ "$CONFIRM_VERSION" != "$VERSION" ]; then
+            echo "Input confirm_version ($CONFIRM_VERSION) must match package.json version ($VERSION)" >&2
+            exit 1
+          fi
+
+          if ! echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Only stable semver releases are supported, got $VERSION" >&2
+            exit 1
+          fi
+
+          git fetch origin --tags --force
+
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists" >&2
+            exit 1
+          fi
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "GitHub release $TAG already exists" >&2
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+      - name: Create tag and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.metadata.outputs.tag }}
+          VERSION: ${{ steps.metadata.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes "Release @shopify-internal/jest-junit@${VERSION} to Cloudsmith. Shopify Build publishes the package from this tag."

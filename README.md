@@ -1,20 +1,29 @@
-[![Actions Status](https://github.com/Shopify/jest-junit/actions/workflows/nodejs.yml/badge.svg?branch=master)](https://github.com/Shopify/jest-junit/actions)
+# @shopify-internal/jest-junit
+A Shopify-internal Jest reporter that creates compatible junit xml files.
 
-# @shopify/jest-junit
-A (forked!) Jest reporter that creates compatible junit xml files
+> The public `@shopify/jest-junit` npm package is frozen at `16.2.5`. Active Shopify releases are published as `@shopify-internal/jest-junit` to Cloudsmith.
 
 Note: Node.js >= 18.0.0 is required.
 
 ## Installation
+
+Make sure the consuming project maps the `@shopify-internal` scope to Cloudsmith:
+
+```ini
+@shopify-internal:registry=https://npm.shopify.io/node/
+```
+
+Then install the reporter:
+
 ```shell
-pnpm add --save-dev @shopify/jest-junit
+pnpm add --save-dev @shopify-internal/jest-junit
 ```
 
 ## Usage
 In your jest config add the following entry:
 ```JSON
 {
-  "reporters": [ "default", "@shopify/jest-junit" ]
+  "reporters": [ "default", "@shopify-internal/jest-junit" ]
 }
 ```
 
@@ -26,17 +35,17 @@ jest
 
 For your Continuous Integration you can simply do:
 ```shell
-jest --ci --reporters=default --reporters=@shopify/jest-junit
+jest --ci --reporters=default --reporters=@shopify-internal/jest-junit
 ```
 
 ## Usage as testResultsProcessor (deprecated)
 The support for `testResultsProcessor` is only kept for [legacy reasons][test-results-processor] and might be removed in the future.
-You should therefore prefer to configure `@shopify/jest-junit` as a _reporter_.
+You should therefore prefer to configure `@shopify-internal/jest-junit` as a _reporter_.
 
 Should you still want to, add the following entry to your jest config:
 ```JSON
 {
-  "testResultsProcessor": "@shopify/jest-junit"
+  "testResultsProcessor": "@shopify-internal/jest-junit"
 }
 ```
 
@@ -48,12 +57,12 @@ jest
 
 For your Continuous Integration you can simply do:
 ```shell
-jest --ci --testResultsProcessor="@shopify/jest-junit"
+jest --ci --testResultsProcessor="@shopify-internal/jest-junit"
 ```
 
 ## Configuration
 
-`@shopify/jest-junit` offers several configurations based on environment variables or a `jest-junit` key defined in `package.json` or a reporter option.
+`@shopify-internal/jest-junit` offers several configurations based on environment variables or a `jest-junit` key defined in `package.json` or a reporter option. Keep the `jest-junit` package.json key unchanged when migrating from the public package name.
 Environment variable and package.json configuration should be **strings**.
 Reporter options should also be strings exception for suiteNameTemplate, classNameTemplate, titleNameTemplate that can also accept a function returning a string.
 
@@ -113,7 +122,7 @@ Or you can define your options in your reporter configuration.
 {
   reporters: [
     "default",
-    [ "@shopify/jest-junit", { suiteName: "jest tests" } ]
+    [ "@shopify-internal/jest-junit", { suiteName: "jest tests" } ]
   ]
 }
 ```
@@ -124,7 +133,7 @@ If using the `usePathForSuiteName` and `suiteNameTemplate`, the `usePathForSuite
 
 ### Examples
 
-Below are some example configuration values and the rendered `.xml` to created by `@shopify/jest-junit`.
+Below are some example configuration values and the rendered `.xml` to created by `@shopify-internal/jest-junit`.
 
 The following test defined in the file `/__tests__/addition.test.js` will be used for all examples:
 ```js
@@ -210,7 +219,7 @@ Using `classNameTemplate` as a function in reporter options
   reporters: [
     "default",
       [
-        "@shopify/jest-junit",
+        "@shopify-internal/jest-junit",
         {
           classNameTemplate: (vars) => {
             return vars.classname.toUpperCase();
@@ -233,7 +242,7 @@ renders
 ```
 
 #### Adding custom testsuite properties
-New feature as of @shopify/jest-junit 11.0.0!
+New feature as of @shopify-internal/jest-junit 11.0.0!
 
 Create a file in your project root directory named junitProperties.js:
 ```js
@@ -283,5 +292,16 @@ Will render
 
 WARNING: Properties for testcases is not following standard JUnit XML schema.
 However, other consumers may support properties for testcases like [DataDog metadata through `<property>` elements](https://docs.datadoghq.com/continuous_integration/tests/junit_upload/?tab=jenkins#providing-metadata-through-property-elements)
+
+## Release process
+
+1. Bump the package version in `package.json`.
+2. Merge the change to `master`.
+3. Run the `Create release` GitHub Actions workflow from `master`, entering the package version as `confirm_version`.
+4. The workflow creates the matching `v<version>` tag and GitHub release.
+5. Shopify Build publishes the packed npm tarball to Cloudsmith (`node` repository) from that tag.
+6. Verify the package with `npm view @shopify-internal/jest-junit@<version> --registry=https://npm.shopify.io/node/`.
+
+The old npmjs GitHub Actions publish path is intentionally removed; do not publish new versions of `@shopify/jest-junit` to public npm.
 
 [test-results-processor]: https://github.com/Shopify/jest-junit/discussions/158#discussioncomment-392985
