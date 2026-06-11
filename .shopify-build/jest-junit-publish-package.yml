@@ -1,0 +1,36 @@
+containers:
+  default:
+    build:
+      from: ubuntu-24
+      type: ci
+      node: 22.13.1
+      node_package_manager: pnpm
+
+# Documentation: https://shopify-build.docs.shopify.io/jobs/publish_packages_to_cloudsmith/
+steps:
+  - label: Publish to Cloudsmith
+    timeout: 10m
+    run:
+      - pnpm: ~
+      - |
+        set -euo pipefail
+
+        NAME=$(node -p "require('./package.json').name")
+
+        if [ "$NAME" != "@shopify/jest-junit" ]; then
+          echo "Expected package name @shopify/jest-junit, got $NAME" >&2
+          exit 1
+        fi
+      - rm -rf pkg
+      - mkdir -p pkg
+      - pnpm pack --pack-destination pkg
+      - ls -l pkg
+    publish:
+      package:
+        repository_name: node
+        package_type: npm
+        git_tag: false
+        fail_on_duplicate: true
+        artifacts:
+          - path: pkg
+            patterns: ['*.tgz']

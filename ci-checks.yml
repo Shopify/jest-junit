@@ -1,0 +1,5 @@
+version: 1.0.0
+required_checks:
+  buildkite:
+    - name: jest-junit-publish-package
+      stages: post-merge
