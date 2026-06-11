@@ -21,20 +21,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: yarn
+          cache: pnpm
       - name: install with jest v${{ matrix.jest-version }}
-        run: |
-          yarn add --dev jest@${{ matrix.jest-version }} babel-jest@${{ matrix.jest-version }}
-          yarn
+        run: pnpm add --save-dev jest@${{ matrix.jest-version }} babel-jest@${{ matrix.jest-version }}
       - name: run tests
-        run: yarn test
+        run: pnpm test
   test-os:
-    name: Test on ${{ matrix.os }} using Node.js LTS
+    name: Test on ${{ matrix.os }} using Node.js 22
     strategy:
       fail-fast: false
       matrix:
@@ -42,12 +43,15 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
-          node-version: lts/*
-          cache: yarn
+          version: 10.28.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: pnpm
       - name: install
-        run: yarn
+        run: pnpm install --frozen-lockfile
       - name: run tests
-        run: yarn test
+        run: pnpm test

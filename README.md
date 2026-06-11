@@ -7,7 +7,7 @@ Note: Node.js >= 18.0.0 is required.
 
 ## Installation
 ```shell
-yarn add --dev @shopify/jest-junit
+pnpm add --save-dev @shopify/jest-junit
 ```
 
 ## Usage
