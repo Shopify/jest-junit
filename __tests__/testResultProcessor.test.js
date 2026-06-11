@@ -26,6 +26,8 @@ const path = require('path');
 
 const testResultProcessor = require('../');
 
+const uuidV4Pattern = '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}';
+
 describe('jest-junit', () => {
   beforeEach(() => {
     const foundKeys = Object.keys(process.env).filter(k => k.startsWith('JEST_JUNIT'));
@@ -71,10 +73,27 @@ describe('jest-junit', () => {
     // Ensure fs.writeFileSync is called
     expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
 
-    const expectedOutputRegex = new RegExp(`${outputPrefix}-\\S+.xml`, "g")
+    const expectedOutputRegex = new RegExp(`${outputPrefix}-${uuidV4Pattern}\\.xml$`, "i")
 
     // Ensure file would have been generated
     expect(fs.writeFileSync).toHaveBeenLastCalledWith(expect.stringMatching(expectedOutputRegex), expect.any(String));
+
+    // Ensure generated file is valid xml
+    const xmlDoc = libxmljs.parseXml(fs.writeFileSync.mock.calls[0][1]);
+    expect(xmlDoc).toBeTruthy();
+  });
+
+  it('should generate valid xml with default unique name', () => {
+    process.env.JEST_JUNIT_UNIQUE_OUTPUT_NAME = 'true'
+
+    const noFailingTestsReport = require('../__mocks__/no-failing-tests.json');
+    testResultProcessor(noFailingTestsReport);
+
+    // Ensure fs.writeFileSync is called
+    expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
+
+    const uniqueOutputPath = fs.writeFileSync.mock.calls[0][0];
+    expect(path.basename(uniqueOutputPath)).toMatch(new RegExp(`^junit\\.xml-${uuidV4Pattern}\\.xml$`, 'i'));
 
     // Ensure generated file is valid xml
     const xmlDoc = libxmljs.parseXml(fs.writeFileSync.mock.calls[0][1]);

@@ -3,11 +3,11 @@
 # @shopify/jest-junit
 A (forked!) Jest reporter that creates compatible junit xml files
 
-Note: as of @shopify/jest-junit 11.0.0 NodeJS >= 10.12.0 is required.
+Note: Node.js >= 18.0.0 is required.
 
 ## Installation
 ```shell
-yarn add --dev @shopify/jest-junit
+pnpm add --save-dev @shopify/jest-junit
 ```
 
 ## Usage
@@ -63,7 +63,7 @@ Reporter options should also be strings exception for suiteNameTemplate, classNa
 | `JEST_JUNIT_OUTPUT_DIR` | `outputDirectory` | Directory to save the output. Relative path outside of project root (e.g. in monorepos) has to be prefixed with `<rootDir>` literal, e.g. `<rootDir>/../coverage` | `process.cwd()` | N/A
 | `JEST_JUNIT_OUTPUT_NAME` | `outputName` | File name for the output. | `"junit.xml"` | N/A
 | `JEST_JUNIT_OUTPUT_FILE` | `outputFile` | Fullpath for the output. If defined, `outputDirectory` and `outputName` will be overridden | `undefined` | N/A
-| `JEST_JUNIT_UNIQUE_OUTPUT_NAME` | `uniqueOutputName` | Create unique file name for the output leveraging the `outputName` as a prefix if given `${outputName}-${uuid}.xml` or a default of `junit.xml-${uuid}.xml` if `outputName` is not specified, overrides `outputName` | `false` | N/A
+| `JEST_JUNIT_UNIQUE_OUTPUT_NAME` | `uniqueOutputName` | Create unique file name for the output using a random UUID suffix. Uses `outputName` as a prefix when given, e.g. `${outputName}-${uuid}.xml`, or the default `junit.xml-${uuid}.xml` when `outputName` is not specified; overrides `outputName` | `false` | N/A
 | `JEST_JUNIT_SUITE_NAME` | `suiteNameTemplate` | Template string for `name` attribute of the `<testsuite>`. | `"{title}"` | `{title}`, `{filepath}`, `{filename}`, `{displayName}`
 | `JEST_JUNIT_CLASSNAME` | `classNameTemplate` | Template string for the `classname` attribute of `<testcase>`. | `"{classname} {title}"` | `{classname}`, `{title}`, `{suitename}`, `{filepath}`, `{filename}`, `{displayName}`
 | `JEST_JUNIT_TITLE` | `titleTemplate` | Template string for the `name` attribute of `<testcase>`. | `"{classname} {title}"` | `{classname}`, `{title}`, `{filepath}`, `{filename}`, `{displayName}`

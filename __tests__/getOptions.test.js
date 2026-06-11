@@ -40,17 +40,21 @@ describe('getOptions', () => {
 
 describe('getUniqueOutputName', () =>{
   const defaultPrefix = 'junit'
+  const uuidV4Pattern = '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
 
   it(`should return default ${defaultPrefix} value if given no preferred prefix`, () => {
     const uniqueOutput = getOptions.getUniqueOutputName()
-    expect(uniqueOutput).toContain(defaultPrefix)
+    expect(uniqueOutput).toMatch(new RegExp(`^${defaultPrefix}-${uuidV4Pattern}\\.xml$`, 'i'))
   })
 
-  it(`should return apply custom prefix value if given prefix`, () => {
+  it(`should apply custom prefix value if given prefix`, () => {
     const customPrefix = "foo"
     const uniqueOutput = getOptions.getUniqueOutputName(customPrefix)
-    expect(uniqueOutput).not.toContain(defaultPrefix)
-    expect(uniqueOutput).toContain(customPrefix)
+    expect(uniqueOutput).toMatch(new RegExp(`^${customPrefix}-${uuidV4Pattern}\\.xml$`, 'i'))
+  })
+
+  it('should generate different output names', () => {
+    expect(getOptions.getUniqueOutputName()).not.toBe(getOptions.getUniqueOutputName())
   })
 
 })
