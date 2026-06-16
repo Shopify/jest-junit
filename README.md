@@ -292,9 +292,10 @@ However, other consumers may support properties for testcases like [DataDog meta
 ## Release process
 
 1. Bump the package version in `package.json`.
-2. Merge the change to `master`.
-3. Shopify Build runs the post-merge publish check and publishes the packed npm tarball to Cloudsmith (`node` repository) when the package version is missing from the private registry.
-4. Verify the package with `npm view @shopify/jest-junit@<version> --registry=https://npm.shopify.io/node/`.
+2. Shopify Build runs `jest-junit-tests` at pre-merge, merge-queue, and post-merge.
+3. Merge the change to `master`.
+4. Shopify Build runs the post-merge publish check and publishes the packed npm tarball to Cloudsmith (`node` repository) when the package version is missing from the private registry.
+5. Verify the package with `npm view @shopify/jest-junit@<version> --registry=https://npm.shopify.io/node/`.
 
 The old npmjs GitHub Actions publish path is intentionally removed. Public npm remains frozen at `16.2.5`; publish new `@shopify/jest-junit` versions only to Shopify Cloudsmith.
 

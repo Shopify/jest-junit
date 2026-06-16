@@ -1,0 +1,14 @@
+containers:
+  default:
+    build:
+      from: ubuntu-24
+      type: ci
+      node: 22.13.1
+      node_package_manager: pnpm
+
+steps:
+  - label: ':jest: Test'
+    timeout: 10m
+    run:
+      - pnpm: ~
+      - pnpm test
